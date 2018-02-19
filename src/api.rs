@@ -7,7 +7,10 @@ struct Message {
 }
 
 #[post("/api/send", format = "application/json", data = "<message>")]
-fn send(message: Json<Message>) -> String {
+fn send(message: Json<Message>) -> Json {
     println!("JSON: {:?}", message);
-    message.content.clone() + "\n"
+    Json(json!({
+        "content": message.content.clone(),
+        "success": true,
+    }))
 }
