@@ -1,4 +1,4 @@
-use rocket_contrib::Json;
+use rocket_contrib::{Json, JsonValue};
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Message {
@@ -7,10 +7,10 @@ struct Message {
 }
 
 #[post("/api/send", format = "application/json", data = "<message>")]
-fn send(message: Json<Message>) -> Json {
-    println!("JSON: {:?}", message);
-    Json(json!({
+fn send(message: Json<Message>) -> JsonValue {
+    info!("JSON: {:?}", message);
+    json!({
         "content": message.content.clone(),
         "success": true,
-    }))
+    })
 }

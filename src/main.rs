@@ -1,6 +1,7 @@
 #![feature(plugin, decl_macro)]
 #![plugin(rocket_codegen)]
 
+#[macro_use] extern crate log;
 extern crate rocket;
 #[macro_use] extern crate rocket_contrib;
 #[macro_use] extern crate serde_derive;
@@ -26,6 +27,6 @@ fn files(file: PathBuf) -> Option<NamedFile> {
 fn main() {
     rocket::ignite()
         .mount("/", routes![index, files, api::send])
-        .catch(errors![errors::not_found])
+        .catch(catchers![errors::not_found])
         .launch();
 }
