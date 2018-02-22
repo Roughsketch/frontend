@@ -24,35 +24,20 @@ function initialize(){
     text = `<table id='nodeTable'>
         <th>ID</th>
         <th>Reading</th>
-        <th>Min Voltage</th>
-        <th>Max Voltage</th>
-        <th>Min Value</th>
-        <th>Max Value</th>
         <th>xBee Name</th>
-        <th>Unit</th>
-        <th>ConnStatus</th>`
+        <th>Unit</th>`
     for(var i = 0; i < length; i++){
         xBeeOBJ = xBeeArray[i]
         if(xBeeOBJ.ConnStatus == true){
             text += '<tr id = \'conn\'><td><button onclick=\'openNode(' + xBeeOBJ.ID + ')\'>'+ xBeeOBJ.ID +'</button></td>'
             text += '<td>' + xBeeOBJ.Reading + '</td>'
-            text += '<td>' + xBeeOBJ.MinVol + '</td>'
-            text += '<td>' + xBeeOBJ.MaxVol + '</td>'
-            text += '<td>' + xBeeOBJ.MinVal + '</td>'
-            text += '<td>' + xBeeOBJ.MaxVal + '</td>'
             text += '<td>' + xBeeOBJ.Name + '</td>'
             text += '<td>' + xBeeOBJ.Unit + '</td>'
-            text += '<td>' + xBeeOBJ.ConnStatus + '</td>'
         }else{
             text += '<tr id = \'dconn\'><td><button onclick=\'openNode(' + xBeeOBJ.ID + ')\'>'+ xBeeOBJ.ID +'</button></td>'
             text += '<td>' + xBeeOBJ.Reading + '</td>'
-            text += '<td>' + xBeeOBJ.MinVol + '</td>'
-            text += '<td>' + xBeeOBJ.MaxVol + '</td>'
-            text += '<td>' + xBeeOBJ.MinVal + '</td>'
-            text += '<td>' + xBeeOBJ.MaxVal + '</td>'
             text += '<td>' + xBeeOBJ.Name + '</td>'
             text += '<td>' + xBeeOBJ.Unit + '</td>'
-            text += '<td>' + xBeeOBJ.ConnStatus + '</td>'
         }
     }
     text += '</table>'
