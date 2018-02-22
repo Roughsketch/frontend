@@ -75,9 +75,9 @@ function refresh(){
     alength = newxBeeArray.length
     if(alength > 0){
         for(var i = 0; i < alength; i++){
-            xBeeOBJ = newxBeeArray[i]
+            xBeeOBJ = newxBeeArray.pop()
             xBeeOBJ.ConnStatus = true
-            xBeeArray.push(newxBeeArray[i])
+            xBeeArray.push(xBeeOBJ)
         }
     }
     initialize()
