@@ -9,7 +9,11 @@ rustup default nightly
 ```
 After that is set up, simply run `cargo build --release` to build the server in release mode, and `cargo run --release` to run it.
 
-The default location for the server to bind to is http://localhost:8000
+The default location for the server to bind to is https://localhost:8000. In order for it to bind and run correctly, you will need to set up a self-signed certificate. To do this, simply run the following command and copy the cert.pem and key.pem to the directory you will run the server from:
+```
+openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
+```
+Browsers will say the certificate isn't trusted, so you will need to add an exception for it.
 
 # Production Mode
 In order to compile in production mode you will need to set an environmental variable to indicate that to Rocket. Simply set the environmental variable `ROCKET_ENV` to `prod`. For example, in Linux you'd run the following to compile and run in production mode:
