@@ -26,7 +26,15 @@ fn files(file: PathBuf) -> Option<NamedFile> {
 
 fn main() {
     rocket::ignite()
-        .mount("/", routes![index, files, api::send])
+        .mount("/", routes![
+            index,
+            files,
+            api::send,
+            api::list_authed,
+            api::list_invalid,
+            api::login,
+            api::logout,
+        ])
         .catch(catchers![errors::not_found])
         .launch();
 }
