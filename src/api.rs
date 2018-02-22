@@ -1,5 +1,5 @@
 use rocket::Outcome;
-use rocket::http::{Cookie, Cookies, Status};
+use rocket::http::{Cookie, Cookies};
 use rocket::request::{self, Request, FromRequest};
 use rocket_contrib::{Json, JsonValue};
 
@@ -38,7 +38,7 @@ fn send(message: Json<Message>) -> JsonValue {
 }
 
 #[get("/api/list")]
-fn list_authed(user: AuthedUser) -> JsonValue {
+fn list_authed(_user: AuthedUser) -> JsonValue {
     json!({
         "success": true,
     })
