@@ -11,6 +11,7 @@ serde_derive = "1.0"
 [dependencies.rocket]
 git = "https://github.com/SergioBenitez/Rocket"
 rev = "ae8e9025d21c8ff512d8a0917494e21b9eaafc2e"
+features = ["tls"]
 
 [dependencies.rocket_codegen]
 git = "https://github.com/SergioBenitez/Rocket"
