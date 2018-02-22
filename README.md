@@ -9,7 +9,7 @@ rustup default nightly
 ```
 After that is set up, simply run `cargo build --release` to build the server in release mode, and `cargo run --release` to run it.
 
-The default location for the server to bind to is https://localhost:8000. In order for it to bind and run correctly, you will need to set up a self-signed certificate. To do this you wil need to install openssl, run the following command, and copy the cert.pem and key.pem to the directory you will run the server from:
+The default location for the server to bind to is https://localhost:8000. In order for it to bind and run correctly, you will need to set up a self-signed certificate. To do this you will need to install openssl, run the following command, and copy the cert.pem and key.pem to the directory you will run the server from:
 ```
 openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
 ```
