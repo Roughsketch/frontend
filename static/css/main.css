@@ -1,0 +1,13 @@
+table, th, td{
+    border: 1px solid black
+}
+
+#conn {
+    background: yellowgreen
+}
+#dconn {
+    background: gray
+}
+th{
+    background: yellow
+}
