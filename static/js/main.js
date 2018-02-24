@@ -8,7 +8,6 @@ function begin(){
    <button onclick='refresh()'>Refresh</button>`
    body.innerHTML = text
    xBeeArray = quickSort(xBeeArray, 0, xBeeArray.length - 1)
-   console.log(xBeeArray)
    initialize()
 }
 function initialize(){
