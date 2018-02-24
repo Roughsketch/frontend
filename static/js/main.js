@@ -7,6 +7,8 @@ function begin(){
    <div id='cTable'></div>
    <button onclick='refresh()'>Refresh</button>`
    body.innerHTML = text
+   xBeeArray = quickSort(xBeeArray, 0, xBeeArray.length - 1)
+   console.log(xBeeArray)
    initialize()
 }
 function initialize(){
@@ -80,6 +82,7 @@ function refresh(){
             xBeeArray.push(xBeeOBJ)
         }
     }
+    xBeeArray = quickSort(xBeeArray, 0, xBeeArray.length-1)
     initialize()
 }
 
@@ -205,13 +208,61 @@ function getNodes(){
         "ConnStatus": true}
         newxBeeArray[2] = xBeeOBJ
 }
-function mergeSort(arr){
-    //TODO make this
-    return arr;
- }
 
- function merge(left, right){
-     //TODO make this
-  }
+function quickSort(items, left, right) {
+    /*big thanks to 
+    https://www.nczonline.net/blog/2012/11/27/computer-science-in-javascript-quicksort/ */
+
+    var index;
+
+    if (items.length > 1) {
+
+        index = partition(items, left, right);
+
+        if (left < index - 1) {
+            quickSort(items, left, index - 1);
+        }
+
+        if (index < right) {
+            quickSort(items, index, right);
+        }
+
+    }
+
+    return items;
+}
+
+function partition(items, left, right) {
+
+    var pivot   = items[Math.floor((right + left) / 2)].ID,
+        i       = left,
+        j       = right;
+
+
+    while (i <= j) {
+
+        while (items[i].ID < pivot) {
+            i++;
+        }
+
+        while (items[j].ID > pivot) {
+            j--;
+        }
+
+        if (i <= j) {
+            swap(items, i, j);
+            i++;
+            j--;
+        }
+    }
+
+    return i;
+}
+  
+function swap(arr, j, i){
+    var x = arr[i]
+    arr[i] = arr[j]
+    arr[j] = x  
+}
     
 getNodes()
