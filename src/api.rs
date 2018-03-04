@@ -29,7 +29,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for AuthedUser {
 }
 
 #[post("/api/send", format = "application/json", data = "<message>")]
-fn send(message: Json<Message>) -> JsonValue {
+fn send(message: Json<Message>, _user: AuthedUser) -> JsonValue {
     info!("JSON: {:?}", message);
     json!({
         "content": message.content.clone(),
