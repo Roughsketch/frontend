@@ -11,3 +11,9 @@ Cargo.lock
 
 /target
 **/*.rs.bk
+
+\.rnd
+
+cert\.pem
+
+key\.pem
