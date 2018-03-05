@@ -21,6 +21,7 @@ function initialize(){
     var length = xBeeArray.length
     var table = document.getElementById('cTable')
     var text = ''
+    xBeeArray.sort(function(a, b){return a.ID - b.ID})
     text = `<table id='nodeTable'>
         <th>ID</th>
         <th>Reading</th>
@@ -205,13 +206,5 @@ function getNodes(){
         "ConnStatus": true}
         newxBeeArray[2] = xBeeOBJ
 }
-function mergeSort(arr){
-    //TODO make this
-    return arr;
- }
-
- function merge(left, right){
-     //TODO make this
-  }
     
 getNodes()
