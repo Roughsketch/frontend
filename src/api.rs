@@ -1,9 +1,9 @@
-use rocket::{Outcome, State};
+use rocket::Outcome;
 use rocket::http::{Cookie, Cookies};
 use rocket::request::{self, Request, FromRequest};
 use rocket_contrib::{Json, JsonValue};
 
-use db::{self, SqlitePool};
+use db::{self, DbConn};
 use db::models::*;
 use db::schema::xbees::dsl::*;
 use diesel::prelude::*;
@@ -43,8 +43,7 @@ fn send(message: Json<Message>, _user: AuthedUser) -> JsonValue {
 }
 
 #[post("/api/add", format = "application/json", data = "<xbee>")]
-fn add(pool: State<SqlitePool>, xbee: Json<NewXbee>, _user: AuthedUser) -> JsonValue {
-    let conn = pool.get().expect("Could not get connection");
+fn add(conn: DbConn, xbee: Json<NewXbee>, _user: AuthedUser) -> JsonValue {
     db::create_xbee(&conn, xbee.node_id, &xbee.name, &xbee.units);
 
     json!({
@@ -53,8 +52,7 @@ fn add(pool: State<SqlitePool>, xbee: Json<NewXbee>, _user: AuthedUser) -> JsonV
 }
 
 #[get("/api/list")]
-fn list_authed(pool: State<SqlitePool>, _user: AuthedUser) -> JsonValue {
-    let conn = pool.get().expect("Could not get connection");
+fn list_authed(conn: DbConn, _user: AuthedUser) -> JsonValue {
     let res = xbees.load::<Xbees>(&*conn).expect("Error loading Xbees.");
 
     json!({
