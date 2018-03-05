@@ -7,7 +7,10 @@ function begin(){
    <div id='cTable'></div>
    <button onclick='refresh()'>Refresh</button>`
    body.innerHTML = text
+<<<<<<< HEAD
    xBeeArray = quickSort(xBeeArray, 0, xBeeArray.length - 1)
+=======
+>>>>>>> 336f497d059f15509fcfc67a81e26f274820d610
    initialize()
 }
 function initialize(){
@@ -22,6 +25,7 @@ function initialize(){
     var length = xBeeArray.length
     var table = document.getElementById('cTable')
     var text = ''
+    xBeeArray.sort(function(a, b){return a.ID - b.ID})
     text = `<table id='nodeTable'>
         <th>ID</th>
         <th>Reading</th>
@@ -51,6 +55,7 @@ function refresh(){
     After, a check needs to be done with existing table elements to see if they were all updated.
     If they weren't, gray out the table box.  If they were, update the data, if new nodes exist add them.
     */
+    newxBeeArray =  getNodes()
     var alength = newxBeeArray.length
     var length = xBeeArray.length
     var found = false
@@ -81,7 +86,6 @@ function refresh(){
             xBeeArray.push(xBeeOBJ)
         }
     }
-    xBeeArray = quickSort(xBeeArray, 0, xBeeArray.length-1)
     initialize()
 }
 
@@ -128,6 +132,27 @@ function goBack(){
     table.innerHTML = tabletext
 }
 
+
+function getNodes(url){
+    var jsonobj = ''
+    var xhttp = new XMLHttpRequest()
+    try{
+        xhttp = new XMLHttpRequest()
+    } catch(e){
+        alert('It looks like you are using an unsupported browser. \nAOL tech support number 1-800-827-6364')
+    }
+    xhttp.onreadystatechange = function(){
+        if(xhttp.readyState == 4 && xhttp.status == 200){
+            jsonobj = JSON.parse(xhttp.responseText)
+            console.log(jsonobj)
+        } 
+    }
+    xhttp.open('Get', url, true)
+    xhttp.send()
+    return jsonobj;
+}
+
+/*
 function getNodes(){
     var xBeeOBJ
         xBeeOBJ = {"ID": "2",
@@ -207,61 +232,5 @@ function getNodes(){
         "ConnStatus": true}
         newxBeeArray[2] = xBeeOBJ
 }
-
-function quickSort(items, left, right) {
-    /*big thanks to 
-    https://www.nczonline.net/blog/2012/11/27/computer-science-in-javascript-quicksort/ */
-
-    var index;
-
-    if (items.length > 1) {
-
-        index = partition(items, left, right);
-
-        if (left < index - 1) {
-            quickSort(items, left, index - 1);
-        }
-
-        if (index < right) {
-            quickSort(items, index, right);
-        }
-
-    }
-
-    return items;
-}
-
-function partition(items, left, right) {
-
-    var pivot   = items[Math.floor((right + left) / 2)].ID,
-        i       = left,
-        j       = right;
-
-
-    while (i <= j) {
-
-        while (items[i].ID < pivot) {
-            i++;
-        }
-
-        while (items[j].ID > pivot) {
-            j--;
-        }
-
-        if (i <= j) {
-            swap(items, i, j);
-            i++;
-            j--;
-        }
-    }
-
-    return i;
-}
-  
-function swap(arr, j, i){
-    var x = arr[i]
-    arr[i] = arr[j]
-    arr[j] = x  
-}
-    
-getNodes()
+*/
+getNodes('https:localhost:8000/testdata/dat.json')
