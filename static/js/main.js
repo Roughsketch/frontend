@@ -162,7 +162,7 @@ function login(url, loginfo){
         } 
     }
     xhttp.open('POST', url, true)
-    xhttp.send('user=root&pass=toor')
+    xhttp.send(logininfo)
     return jsonobj
 }
 
