@@ -1,7 +1,12 @@
-use rocket::Outcome;
+use rocket::{Outcome, State};
 use rocket::http::{Cookie, Cookies};
 use rocket::request::{self, Request, FromRequest};
 use rocket_contrib::{Json, JsonValue};
+
+use db::{self, SqlitePool};
+use db::models::*;
+use db::schema::xbees::dsl::*;
+use diesel::prelude::*;
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Message {
@@ -37,9 +42,23 @@ fn send(message: Json<Message>, _user: AuthedUser) -> JsonValue {
     })
 }
 
-#[get("/api/list")]
-fn list_authed(_user: AuthedUser) -> JsonValue {
+#[post("/api/add", format = "application/json", data = "<xbee>")]
+fn add(pool: State<SqlitePool>, xbee: Json<NewXbee>, _user: AuthedUser) -> JsonValue {
+    let conn = pool.get().expect("Could not get connection");
+    db::create_xbee(&conn, xbee.node_id, &xbee.name, &xbee.units);
+
     json!({
+        "success": true,
+    })
+}
+
+#[get("/api/list")]
+fn list_authed(pool: State<SqlitePool>, _user: AuthedUser) -> JsonValue {
+    let conn = pool.get().expect("Could not get connection");
+    let res = xbees.load::<Xbees>(&*conn).expect("Error loading Xbees.");
+
+    json!({
+        "nodes": res,
         "success": true,
     })
 }

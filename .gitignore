@@ -17,3 +17,5 @@ Cargo.lock
 cert\.pem
 
 key\.pem
+
+db/
