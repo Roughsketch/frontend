@@ -51,6 +51,7 @@ function refresh(){
     After, a check needs to be done with existing table elements to see if they were all updated.
     If they weren't, gray out the table box.  If they were, update the data, if new nodes exist add them.
     */
+    newxBeeArray =  getNodes()
     var alength = newxBeeArray.length
     var length = xBeeArray.length
     var found = false
@@ -127,6 +128,27 @@ function goBack(){
     table.innerHTML = tabletext
 }
 
+
+function getNodes(url){
+    var jsonobj = ''
+    var xhttp = new XMLHttpRequest()
+    try{
+        xhttp = new XMLHttpRequest()
+    } catch(e){
+        alert('It looks like you are using an unsupported browser. \nAOL tech support number 1-800-827-6364')
+    }
+    xhttp.onreadystatechange = function(){
+        if(xhttp.readyState == 4 && xhttp.status == 200){
+            jsonobj = JSON.parse(xhttp.responseText)
+            console.log(jsonobj)
+        } 
+    }
+    xhttp.open('Get', url, true)
+    xhttp.send()
+    return jsonobj;
+}
+
+/*
 function getNodes(){
     var xBeeOBJ
         xBeeOBJ = {"ID": "2",
@@ -206,5 +228,5 @@ function getNodes(){
         "ConnStatus": true}
         newxBeeArray[2] = xBeeOBJ
 }
-    
-getNodes()
+*/
+getNodes('https:localhost:8000/testdata/dat.json')
