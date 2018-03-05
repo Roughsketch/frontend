@@ -2,8 +2,10 @@
 address = "localhost"
 port = 8000
 log = "normal"
+secret_key = "ox3Pqjb6C7znU/UXFbiHzLo3iYSmwm2dl03eD5x417Q="
 
 [production]
 address = "localhost"
 port = 8000
 log = "critical"
+secret_key = "ox3Pqjb6C7znU/UXFbiHzLo3iYSmwm2dl03eD5x417Q="

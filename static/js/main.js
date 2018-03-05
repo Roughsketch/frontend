@@ -143,7 +143,7 @@ function getNodes(url){
             console.log(jsonobj)
         } 
     }
-    xhttp.open('Get', url, true)
+    xhttp.open('GET', url, true)
     xhttp.send()
     return jsonobj;
 }
@@ -229,4 +229,4 @@ function getNodes(){
         newxBeeArray[2] = xBeeOBJ
 }
 */
-getNodes('https:localhost:8000/testdata/dat.json')
+getNodes('https://jsonplaceholder.typicode.com/posts/1')
