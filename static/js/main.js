@@ -7,10 +7,6 @@ function begin(){
    <div id='cTable'></div>
    <button onclick='refresh()'>Refresh</button>`
    body.innerHTML = text
-<<<<<<< HEAD
-   xBeeArray = quickSort(xBeeArray, 0, xBeeArray.length - 1)
-=======
->>>>>>> 336f497d059f15509fcfc67a81e26f274820d610
    initialize()
 }
 function initialize(){
