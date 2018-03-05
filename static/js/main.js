@@ -131,7 +131,7 @@ function goBack(){
 
 function getNodes(url){
     var jsonobj = ''
-    var xhttp = new XMLHttpRequest()
+    var xhttp = ''
     try{
         xhttp = new XMLHttpRequest()
     } catch(e){
@@ -146,6 +146,24 @@ function getNodes(url){
     xhttp.open('GET', url, true)
     xhttp.send()
     return jsonobj;
+}
+
+function login(url, loginfo){
+    var jsonobj
+    try{
+        var xhttp = new XMLHttpRequest()
+    } catch(e){
+        alert('It looks like you are using an unsupported browser. \nAOL tech support number 1-800-827-6364')
+    }
+    xhttp.onreadystatechange = function(){
+        if(xhttp.readyState == 4 && xhttp.status == 200){
+            jsonobj = JSON.parse(xhttp.responseText)
+            console.log(jsonobj)
+        } 
+    }
+    xhttp.open('POST', url, true)
+    xhttp.send('user=root&pass=toor')
+    return jsonobj
 }
 
 /*
@@ -229,4 +247,5 @@ function getNodes(){
         newxBeeArray[2] = xBeeOBJ
 }
 */
-getNodes('https://jsonplaceholder.typicode.com/posts/1')
+login('https://127.0.0.1:8000/api/login', {"user": "root", "pass": "toor"})
+getNodes('https://127.0.0.1:8000/api/list')
