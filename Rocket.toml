@@ -6,10 +6,10 @@ key = "key.pem"
 address = "localhost"
 port = 8000
 log = "normal"
-secret_key = "ox3Pqjb6C7znU/UXFbiHzLo3iYSmwm2dl03eD5x417Q="
+secret_key = "u4shYQ/3Jm6+vh5QZsy4oX84rHDcS3/RDOgUEAL0p4M="
 
 [production]
-address = "0.0.0.0"
+address = "localhost"
 port = 8000
 log = "critical"
-secret_key = "ox3Pqjb6C7znU/UXFbiHzLo3iYSmwm2dl03eD5x417Q="
+secret_key = "u4shYQ/3Jm6+vh5QZsy4oX84rHDcS3/RDOgUEAL0p4M="

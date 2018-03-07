@@ -162,7 +162,7 @@ function login(url, loginfo){
         } 
     }
     xhttp.open('POST', url, true)
-    xhttp.send(logininfo)
+    xhttp.send(loginfo)
     return jsonobj
 }
 
@@ -247,5 +247,5 @@ function getNodes(){
         newxBeeArray[2] = xBeeOBJ
 }
 */
-login('https://127.0.0.1:8000/api/login', {"user": "root", "pass": "toor"})
-getNodes('https://127.0.0.1:8000/api/list')
+login('https://localhost:8000/api/login', {"user": "root", "pass": "toor"})
+getNodes('https://localhost:8000/api/list')
