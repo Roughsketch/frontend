@@ -9,6 +9,7 @@ function begin(){
    body.innerHTML = text
    initialize()
 }
+
 function initialize(){
     /*TODO need a function that will return all connected Xbees with values for columns
     (id, description, value)
@@ -51,6 +52,7 @@ function refresh(){
     After, a check needs to be done with existing table elements to see if they were all updated.
     If they weren't, gray out the table box.  If they were, update the data, if new nodes exist add them.
     */
+    newxBeeArray =  getNodes('https://localhost:8000/api/list')
     var alength = newxBeeArray.length
     var length = xBeeArray.length
     var found = false
@@ -127,84 +129,36 @@ function goBack(){
     table.innerHTML = tabletext
 }
 
+
 function getNodes(){
-    var xBeeOBJ
-        xBeeOBJ = {"ID": "2",
-        "Reading": "24",
-        "MinVol": "1",
-        "MaxVol": "200",
-        "MinVal": "40", 
-        "MaxVal": "212", 
-        "Name": "pressure", 
-        "Unit": "Fdeg",
-        "ConnStatus": true}
-        xBeeArray[0] = xBeeOBJ
-        
-        xBeeOBJ = {"ID": "1",
-        "Reading": "22",
-        "MinVol": "0",
-        "MaxVol": "212",
-        "MinVal": "32", 
-        "MaxVal": "100", 
-        "Name": "Temperature", 
-        "Unit": "Fdeg",
-        "ConnStatus": true}
-        xBeeArray[1] = xBeeOBJ
-        
-        xBeeOBJ = {"ID": "4",
-        "Reading": "22",
-        "MinVol": "0",
-        "MaxVol": "212",
-        "MinVal": "32", 
-        "MaxVal": "100", 
-        "Name": "Temperature", 
-        "Unit": "Fdeg",
-        "ConnStatus": true}
-        xBeeArray[2] = xBeeOBJ
-        
-        xBeeOBJ = {"ID": "3",
-        "Reading": "22",
-        "MinVol": "0",
-        "MaxVol": "212",
-        "MinVal": "32", 
-        "MaxVal": "100", 
-        "Name": "Temperature", 
-        "Unit": "Fdeg",
-        "ConnStatus": true}
-        xBeeArray[3] = xBeeOBJ
+    var jsonobj = ''
+    var xhttp = new XMLHttpRequest()
 
-        xBeeOBJ = {"ID": "3",
-        "Reading": '80',
-        "MinVol": "0",
-        "MaxVol": "212",
-        "MinVal": "32", 
-        "MaxVal": "100", 
-        "Name": "Temperature", 
-        "Unit": "Fdeg",
-        "ConnStatus": true}
-        newxBeeArray[0] = xBeeOBJ
-        
-        xBeeOBJ = {"ID": "4",
-        "Reading": "99",
-        "MinVol": "0",
-        "MaxVol": "212",
-        "MinVal": "32", 
-        "MaxVal": "100", 
-        "Name": "Temperature", 
-        "Unit": "Fdeg",
-        "ConnStatus": true}
-        newxBeeArray[1] = xBeeOBJ
-
-        xBeeOBJ = {"ID": "5",
-        "Reading": "99",
-        "MinVol": "0",
-        "MaxVol": "212",
-        "MinVal": "32", 
-        "MaxVal": "100", 
-        "Name": "Temperature", 
-        "Unit": "Fdeg",
-        "ConnStatus": true}
-        newxBeeArray[2] = xBeeOBJ
+    xhttp.onreadystatechange = function(){
+        if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
+            jsonobj = JSON.parse(xhttp.responseText)
+            console.log(jsonobj)
+        } 
+    }
+    xhttp.open('GET', 'api/list', true)
+    xhttp.send()
+    return jsonobj;
 }
-    
+
+function login(loginfo){
+    var jsonobj
+    var xhttp = new XMLHttpRequest()
+    xhttp.onreadystatechange = function(){
+        if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
+            jsonobj = JSON.parse(xhttp.responseText)
+            console.log(jsonobj)
+        } 
+    }
+    xhttp.open('POST','api/login', true)
+    xhttp.send(loginfo)
+    return jsonobj
+}
+
+
+login({"user": "root", "pass": "toor"})
 getNodes()

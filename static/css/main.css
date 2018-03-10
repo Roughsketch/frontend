@@ -1,13 +1,33 @@
-table, th, td{
-    border: 1px solid black
+#divtitle {
+    background: rgb(252, 252, 93);
+}
+body{
+    background: rgb(153, 47, 47);
 }
 
+#app{
+    background: rgb(83, 218, 83);
+    text-align: center;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+#tabTitle{
+    font-size: 20;
+}
+table{
+    border: 1px solid black;
+    margin: auto;
+}
+th, td{
+    border: 1px solid black;
+}
 #conn {
-    background: yellowgreen
+    background: rgb(160, 174, 255);
 }
 #dconn {
-    background: gray
+    background: gray;
 }
 th{
-    background: yellow
+    background: rgb(252, 252, 93);
 }
