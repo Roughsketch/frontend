@@ -30,6 +30,7 @@ function initialize(){
         <th>Unit</th>`;
     for(var i = 0; i < length; i++){
         xBeeOBJ = xBeeArray[i];
+        if(xBeeOBJ.ConnStatus === true){
             text += '<tr id = \'conn\'><td><button onclick=\'openNode(' + xBeeOBJ.ID + ')\'>'+ xBeeOBJ.ID +'</button></td>';
             text += '<td>' + xBeeOBJ.Reading + '</td>';
             text += '<td>' + xBeeOBJ.Name + '</td>';
