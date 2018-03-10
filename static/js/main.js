@@ -130,35 +130,35 @@ function goBack(){
 }
 
 
-function getNodes(url){
+function getNodes(){
     var jsonobj = ''
     var xhttp = new XMLHttpRequest()
- 
-    http.onreadystatechange = function(){
-        if(XMLHttpRequest.DONE){
+
+    xhttp.onreadystatechange = function(){
+        if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
             jsonobj = JSON.parse(xhttp.responseText)
             console.log(jsonobj)
         } 
     }
-    xhttp.open('GET', url, true)
+    xhttp.open('GET', 'api/list', true)
     xhttp.send()
     return jsonobj;
 }
 
-function login(url, loginfo){
+function login(loginfo){
     var jsonobj
-   
+    var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function(){
-        if(XMLHttpRequest.DONE){
+        if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
             jsonobj = JSON.parse(xhttp.responseText)
             console.log(jsonobj)
         } 
     }
-    xhttp.open('POST', url, true)
+    xhttp.open('POST','api/login', true)
     xhttp.send(loginfo)
     return jsonobj
 }
 
 
-login('https://localhost:8000/api/login', {"user": "root", "pass": "toor"})
+login({"user": "root", "pass": "toor"})
 getNodes()
