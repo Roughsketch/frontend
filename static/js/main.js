@@ -52,7 +52,7 @@ function refresh(){
     After, a check needs to be done with existing table elements to see if they were all updated.
     If they weren't, gray out the table box.  If they were, update the data, if new nodes exist add them.
     */
-    newxBeeArray =  getNodes('https://localhost:8000/api/list')
+    newxBeeArray =  getNodes()
     var alength = newxBeeArray.length
     var length = xBeeArray.length
     var found = false
@@ -140,7 +140,7 @@ function getNodes(){
             console.log(jsonobj)
         } 
     }
-    xhttp.open('GET', 'api/list', true)
+    xhttp.open('GET', '/api/list', true)
     xhttp.send()
     return jsonobj;
 }
@@ -154,7 +154,7 @@ function login(loginfo){
             console.log(jsonobj)
         } 
     }
-    xhttp.open('POST','api/login', true)
+    xhttp.open('POST','/api/login', true)
     xhttp.send(loginfo)
     return jsonobj
 }
