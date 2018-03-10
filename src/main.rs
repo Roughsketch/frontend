@@ -1,8 +1,5 @@
 #![feature(plugin, decl_macro)]
 #![plugin(rocket_codegen)]
-#![feature(alloc_system)]
-extern crate alloc_system;
-
 
 #[macro_use] 
 extern crate diesel;
