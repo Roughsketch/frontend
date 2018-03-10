@@ -18,3 +18,11 @@ pub struct NewXbee {
     pub name: String,
     pub units: String,
 }
+
+/// Represents a user in the database.
+#[derive(Queryable, Deserialize, Serialize)]
+pub struct User {
+    pub id: i32,
+    pub username: String,
+    pub password: String,
+}
