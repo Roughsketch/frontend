@@ -23,7 +23,7 @@ struct Login {
 /// Represents a user who is authorized via private cookies.
 /// A user will become authorized once they login with
 /// the proper credentials using the /api/login endpoint.
-struct AuthedUser;
+pub struct AuthedUser;
 
 /// Controls how an authorized user's requests are handled.
 /// If a user is authenticated, it will succeed. Otherwise

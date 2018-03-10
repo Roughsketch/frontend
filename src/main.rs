@@ -26,12 +26,21 @@ mod api;
 mod db;
 mod errors;
 
-/// This will return the homepage. It is the base for the
-/// frontend and is where the user will be able to interact
-/// with and view data from the backend.
+/// This will return the homepage for an authorized user.
+/// It is the base for the frontend and is where the user 
+/// will be able to interact with and view data from the 
+/// backend.
 #[get("/")]
-fn index() -> io::Result<NamedFile> {
+fn index_authed(_user: api::AuthedUser) -> io::Result<NamedFile> {
     NamedFile::open("static/index.html")
+}
+
+/// This will return the homepage for an unauthorized user.
+/// Since the data being shown and modified is private,
+/// this will instead redirect to a login page.
+#[get("/", rank = 2)]
+fn index_login() -> io::Result<NamedFile> {
+    NamedFile::open("static/login.html")
 }
 
 /// This is a wildcard route. It will attempt to send a file
@@ -52,7 +61,8 @@ fn main() {
     //  Mount all the routes for the webserver
     rocket::ignite()
         .mount("/", routes![
-            index,
+            index_authed,
+            index_login,
             files,
             api::add,
             api::send,
