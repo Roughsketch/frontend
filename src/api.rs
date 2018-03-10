@@ -81,7 +81,7 @@ fn send(message: Json<Message>, _user: AuthedUser) -> JsonValue {
 /// }
 /// ```
 #[post("/api/add", format = "application/json", data = "<xbee>")]
-fn add(conn: DbConn, xbee: Json<NewXbee>, _user: AuthedUser) -> JsonValue {
+fn add(xbee: Json<NewXbee>, conn: DbConn, _user: AuthedUser) -> JsonValue {
     db::create_xbee(&conn, xbee.node_id, &xbee.name, &xbee.units);
 
     json!({
