@@ -3,9 +3,13 @@ use rocket::http::{Cookie, Cookies};
 use rocket::request::{self, Request, FromRequest};
 use rocket_contrib::{Json, JsonValue};
 
+use bcrypt;
+
 use db::{self, DbConn};
 use db::models::*;
 use db::schema::xbees::dsl::*;
+use db::schema::users::dsl::*;
+use diesel;
 use diesel::prelude::*;
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -135,23 +139,57 @@ fn list_invalid() -> JsonValue {
 /// will be stored which will allow them to access endpoints that
 /// require authentication.
 /// 
-/// **Note**: This is a very insecure login. It is meant to be a placeholder.
+/// # Errors
+/// If the given username is not in the database, an error noting
+/// that will be returned.
 /// 
-/// # Todo:
-/// Change this so it reads from a SQLite database or something.
+/// If a valid username is given but the password is wrong, an error
+/// will be returned.
+/// 
+/// If any other database error occurs it will return a generic error.
 #[post("/api/login", format = "application/json", data = "<login>")]
-fn login(login: Json<Login>, mut cookies: Cookies) -> JsonValue {
-    if login.user == "root" && login.pass == "toor" {
-        cookies.add_private(Cookie::new("auth", "true"));
+fn login(login: Json<Login>, conn: DbConn, mut cookies: Cookies) -> JsonValue {
+    //  Try to find a user in the database with the given username.
+    //  This query returns at most 1 result.
+    let res = users
+        .filter(username.eq(&login.user))
+        .get_result::<User>(&*conn);
 
-        json!({
-            "success": true,
-        })
-    } else {
-        json!({
-            "error": "Invalid login credentials.",
-            "success": false,
-        })
+    match res {
+        //  User was found, so now check the password.
+        Ok(user) => {
+            //  Password is stored as a bcrypt hash so we need to
+            //  ensure it is correct.
+            if let Ok(true) = bcrypt::verify(&login.pass, &user.password) {
+                //  Password matched hash, add authenticated cookie.
+                cookies.add_private(Cookie::new("auth", "true"));
+
+                json!({
+                    "success": true,
+                })
+            } else {
+                //  Either the hash check failed, or the hash didn't match.
+                //  Either way, return invalid credentials.
+                json!({
+                    "error": "Invalid login credentials.",
+                    "success": false,
+                })
+            }
+        }
+        //  User was not found in the database.
+        Err(diesel::result::Error::NotFound) => {
+            json!({
+                "error": "No user with that name found.",
+                "success": false,
+            })
+        }
+        //  Another database error occurred.
+        Err(_) => {
+            json!({
+                "error": "Error getting information from database.",
+                "success": false,
+            })
+        }
     }
 }
 

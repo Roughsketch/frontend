@@ -1,6 +1,7 @@
 #![feature(plugin, decl_macro)]
 #![plugin(rocket_codegen)]
 
+extern crate bcrypt;
 #[macro_use] 
 extern crate diesel;
 extern crate dotenv;
