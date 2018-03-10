@@ -6,3 +6,11 @@ table! {
         units -> Text,
     }
 }
+
+table! {
+    users (id) {
+        id -> Integer,
+        username -> Text,
+        password -> Text,
+    }
+}
