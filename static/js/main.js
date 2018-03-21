@@ -15,7 +15,7 @@ function initialize(){
     (id, description, value)
     id = Xbee id number
     description = brief summary of node
-    value = The scaled value of the reading 
+    value = The scaled value of the reading
     Then populate a table on the page with all of these values
     JSON*/
     var xBeeOBJ
@@ -138,27 +138,34 @@ function getNodes(){
         if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
             jsonobj = JSON.parse(xhttp.responseText)
             console.log(jsonobj)
-        } 
+        }
     }
     xhttp.open('GET', 'api/list', true)
     xhttp.send()
     return jsonobj;
 }
 
-function login(loginfo){
+function loginCall(){
+    var jsonobj = login()
+    if(jsonobj.success){
+      window.location = 'index.html'
+    }else{
+      $( '#errorcon' ).text( 'Error: ' + jsonobj.error )
+    }
+}
+
+function login(){
     var jsonobj
+    var user = $('#user').val();
+    var password = $('#password').val();
+    var loginfo = '{"user": \"' + user + '\", "pass": \"' + password + '\"}'
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function(){
         if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
             jsonobj = JSON.parse(xhttp.responseText)
-            console.log(jsonobj)
-        } 
+        }
     }
     xhttp.open('POST','api/login', true)
     xhttp.send(loginfo)
     return jsonobj
 }
-
-
-login({"user": "root", "pass": "toor"})
-getNodes()
