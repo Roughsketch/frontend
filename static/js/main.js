@@ -5,7 +5,7 @@ function begin(){
    var body = document.getElementById('mainb')
    var text = `<h1 id='tabTitle'>Xbee Nodes</h1>
    <div id='cTable'></div>
-   <button onclick='refresh()'>Refresh</button>`
+   <p id='refbutton'><button onclick='refresh()'>Refresh</button></p>`
    body.innerHTML = text
    initialize()
 }
@@ -124,7 +124,7 @@ function goBack(){
     var page = document.getElementById('mainb')
     page.innerHTML = `<h1 id='tabTitle'>Xbee Nodes</h1>
     <div id='cTable'></div>
-    <button onclick='refresh()'>Refresh</button>`
+    <p id='refbutton'><button onclick='refresh()'>Refresh</button></p>`
     var table = document.getElementById('cTable')
     table.innerHTML = tabletext
 }
