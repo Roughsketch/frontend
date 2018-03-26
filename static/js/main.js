@@ -52,7 +52,7 @@ function refresh(){
     After, a check needs to be done with existing table elements to see if they were all updated.
     If they weren't, gray out the table box.  If they were, update the data, if new nodes exist add them.
     */
-    newxBeeArray =  getNodes('api/list')
+    newxBeeArray =  getNodes()
     var alength = newxBeeArray.length
     var length = xBeeArray.length
     var found = false
