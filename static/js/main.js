@@ -153,6 +153,8 @@ function login(){
     var user = $('#user').val();
     var password = $('#password').val();
     var loginfo = {"user" : "user", "pass" : "pass"};
+    loginfo.user = user;
+    loginfo.pass = password;
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
         if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
