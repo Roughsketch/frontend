@@ -132,18 +132,19 @@ function goBack() {
     var table = document.getElementById('cTable');
     table.innerHTML = tabletext;
 }
+
 function getNodes(){
-    var jsonobj = ''
-    var xhttp = new XMLHttpRequest()
+    var jsonobj = '';
+    var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function(){
         if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
-            jsonobj = JSON.parse(xhttp.responseText)
-            console.log(jsonobj)
+            jsonobj = JSON.parse(xhttp.responseText);
+            console.log(jsonobj);
         }
     }
-    xhttp.open('GET', 'api/list', true)
-    xhttp.send()
+    xhttp.open('GET', 'api/list', true);
+    xhttp.send();
     return jsonobj;
 }
 
@@ -157,7 +158,7 @@ function loginCall(){
 }
 
 function login(){
-    var jsonobj
+    var jsonobj;
     var user = $('#user').val();
     var password = $('#password').val();
     var loginfo = '{"user": \"' + user + '\", "pass": \"' + password + '\"}';
