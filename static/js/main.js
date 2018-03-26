@@ -148,27 +148,23 @@ function getNodes(){
     return jsonobj;
 }
 
-function loginCall(){
-    var jsonobj = login();
-    if(jsonobj.success){
-      window.location = 'index.html';
-    }else{
-      $( '#errorcon' ).text( 'Error: ' + jsonobj.error );
-    }
-}
-
 function login(){
     var jsonobj;
     var user = $('#user').val();
     var password = $('#password').val();
-    var loginfo = '{"user": \"' + user + '\", "pass": \"' + password + '\"}';
+    var loginfo = {"user" : "user", "pass" : "pass"};
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
         if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
             jsonobj = JSON.parse(xhttp.responseText);
+            if(jsonobj.success){
+              window.location = 'index.html';
+            }else{
+              $( '#errorcon' ).text( 'Error: ' + jsonobj.error );
+            }
         }
     }
     xhttp.open('POST','api/login', true);
-    xhttp.send(loginfo);
-    return jsonobj;
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send(JSON.stringify(loginfo));
 }
