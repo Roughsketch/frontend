@@ -8,6 +8,10 @@ function begin() {
    <div id='cTable'></div>
    <p id='refbutton'><button onclick='getNodes(true)'>Refresh</button></p>`;
    body.innerHTML = text;
+
+   for(var i = 0; i < 10; i++){
+       addXbees(i);
+   }
    getNodes(false);
 }
 
@@ -189,4 +193,23 @@ function logout(){
     }
     xhttp.open('GET','/api/logout', true);
     xhttp.send();
+}
+
+function addXbees(i){
+    jsonobj = '';
+    var xhttp = new XMLHttpRequest();
+
+    xbee = {"node_id":i, "name":i.toString(), "units":i.toString()};
+
+    xhttp.onreadystatechange = function(){
+        if(xhttp.readState == XMLHttpRequest.DONE && xhttp.status == 200){
+            jsonobj = JSON.parse(xhttp.responseText);
+            if(!jsonobj.success){
+                alert('addXbees failed')
+            }
+        }
+    }
+    xhttp.open('POST', '/api/add', true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send(JSON.stringify(xbee));
 }
