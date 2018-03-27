@@ -6,9 +6,13 @@ function begin() {
     var body = document.getElementById('mainb');
     var text = `<h1 id='tabTitle'>Xbee Nodes</h1>
    <div id='cTable'></div>
-   <button onclick='refresh()'>Refresh</button>`;
-    body.innerHTML = text;
-    initialize();
+   <p id='refbutton'><button onclick='getNodes(true)'>Refresh</button></p>`;
+   body.innerHTML = text;
+
+   for(var i = 0; i < 10; i++){
+       addXbees(i);
+   }
+   getNodes(false);
 }
 
 function initialize() {
@@ -16,7 +20,7 @@ function initialize() {
     (id, description, value)
     id = Xbee id number
     description = brief summary of node
-    value = The scaled value of the reading 
+    value = The scaled value of the reading
     Then populate a table on the page with all of these values
     JSON*/
     var xBeeOBJ;
@@ -55,7 +59,6 @@ function refresh() {
     After, a check needs to be done with existing table elements to see if they were all updated.
     If they weren't, gray out the table box.  If they were, update the data, if new nodes exist add them.
     */
-    newxBeeArray = getNodes();
     var alength = newxBeeArray.length;
     var length = xBeeArray.length;
     var found = false;
@@ -63,7 +66,7 @@ function refresh() {
     for (var i = 0; i < length; i++) {
         xBeeArray[i].ConnStatus = false;
     }
-    for (var i = 0; i < alength; i++) {
+    for (i = 0; i < alength; i++) {
         xBeeOBJ = newxBeeArray.shift();
         for (var j = 0; j < length; j++) {
             if (xBeeOBJ.ID == xBeeArray[j].ID) {
@@ -80,7 +83,7 @@ function refresh() {
     }
     alength = newxBeeArray.length;
     if (alength > 0) {
-        for (var i = 0; i < alength; i++) {
+        for (i = 0; i < alength; i++) {
             xBeeOBJ = newxBeeArray.pop();
             xBeeOBJ.ConnStatus = true;
             xBeeArray.push(xBeeOBJ);
@@ -128,19 +131,30 @@ function goBack() {
     var page = document.getElementById('mainb');
     page.innerHTML = `<h1 id='tabTitle'>Xbee Nodes</h1>
     <div id='cTable'></div>
-    <button onclick='refresh()'>Refresh</button>`;
+    <p id='refbutton'><button onclick='refresh()'>Refresh</button></p>`;
     var table = document.getElementById('cTable');
     table.innerHTML = tabletext;
 }
 
-function getNodes() {
+function getNodes(refreshtest){
+    //refreshtest just determines what function to send data to.
+    //true for refresh(), false for initialize().
     var jsonobj = '';
     var xhttp = new XMLHttpRequest();
 
-    xhttp.onreadystatechange = function() {
-        if (xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200) {
+    xhttp.onreadystatechange = function(){
+        if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
             jsonobj = JSON.parse(xhttp.responseText);
-            console.log(jsonobj);
+            if(refreshtest && jsonobj.success){
+                newxBeeArray = jsonobj.nodes;
+                refresh();
+            }else if(!refreshtest && jsonobj.success){
+                xBeeArray = jsonobj.nodes;
+                initialize();
+            }else{
+                alert('You are not authorized, please sign in.');
+                window.location = 'login.html';
+            }
         }
     };
     xhttp.open('GET', '/api/list', true);
@@ -148,23 +162,55 @@ function getNodes() {
     return jsonobj;
 }
 
-function login(loginfo) {
+function login(){
     var jsonobj;
+    var loginfo = {"user" : $('#user').val(), "pass" : $('#password').val()};
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200) {
+    xhttp.onreadystatechange = function(){
+        if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
             jsonobj = JSON.parse(xhttp.responseText);
-            console.log(jsonobj);
+            if(jsonobj.success){
+              window.location = 'index.html';
+            }else{
+              $( '#errorcon' ).text( 'Error: ' + jsonobj.error );
+            }
         }
     };
-    xhttp.open('POST', '/api/login', true);
-    xhttp.send(loginfo);
-    return jsonobj;
+    xhttp.open('POST','/api/login', true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send(JSON.stringify(loginfo));
 }
 
+function logout(){
+    var jsonobj = '';
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function(){
+        if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
+            jsonobj = JSON.parse(xhttp.responseText);
+            if(jsonobj.success){
+                window.location = 'login.html';
+            }
+        }
+    };
+    xhttp.open('GET','/api/logout', true);
+    xhttp.send();
+}
 
-login({
-    "user": "root",
-    "pass": "toor"
-});
-getNodes();
+function addXbees(i){
+    jsonobj = '';
+    var xhttp = new XMLHttpRequest();
+
+    xbee = {"node_id":i, "name":i.toString(), "units":i.toString()};
+
+    xhttp.onreadystatechange = function(){
+        if(xhttp.readState == XMLHttpRequest.DONE && xhttp.status == 200){
+            jsonobj = JSON.parse(xhttp.responseText);
+            if(!jsonobj.success){
+                alert('addXbees failed');
+            }
+        }
+    };
+    xhttp.open('POST', '/api/add', true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send(JSON.stringify(xbee));
+}
