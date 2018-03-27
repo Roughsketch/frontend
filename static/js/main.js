@@ -15,7 +15,7 @@ function begin() {
    getNodes(false);
 }
 
-function initialize(ndoes) {
+function initialize() {
     /*TODO need a function that will return all connected Xbees with values for columns
     (id, description, value)
     id = Xbee id number
@@ -23,7 +23,6 @@ function initialize(ndoes) {
     value = The scaled value of the reading
     Then populate a table on the page with all of these values
     JSON*/
-    xBeeArray = nodes;
     var xBeeOBJ;
     var length = xBeeArray.length;
     var table = document.getElementById('cTable');
@@ -33,7 +32,7 @@ function initialize(ndoes) {
     });
     text = `<table id='nodeTable'>
         <th>ID</th>
-        <th>Reading</th>
+        <th>Readingrefresh</th>
         <th>xBee Name</th>
         <th>Unit</th>`;
     for (var i = 0; i < length; i++) {
@@ -50,12 +49,12 @@ function initialize(ndoes) {
             text += '<td>' + xBeeOBJ.Unit + '</td>';
         }
     }
-    text += '</table>';refresh
+    text += '</table>';
     table.innerHTML = text;
     tabletext = text;
 }
 
-function refresh(newxBeeArray) {
+function refresh() {
     /*TODO need a function that will return all connected Xbees again with values for columns(idnum, data)
     After, a check needs to be done with existing table elements to see if they were all updated.
     If they weren't, gray out the table box.  If they were, update the data, if new nodes exist add them.
@@ -67,11 +66,11 @@ function refresh(newxBeeArray) {
     for (var i = 0; i < length; i++) {
         xBeeArray[i].ConnStatus = false;
     }
-    for (var i = 0; i < alength; i++) {
+    for (i = 0; i < alength; i++) {
         xBeeOBJ = newxBeeArray.shift();
         for (var j = 0; j < length; j++) {
             if (xBeeOBJ.ID == xBeeArray[j].ID) {
-                found = true;refresh
+                found = true;
                 xBeeOBJ.ConnStatus = true;
                 xBeeArray[j] = xBeeOBJ;
                 break;
@@ -84,7 +83,7 @@ function refresh(newxBeeArray) {
     }
     alength = newxBeeArray.length;
     if (alength > 0) {
-        for (var i = 0; i < alength; i++) {
+        for (i = 0; i < alength; i++) {
             xBeeOBJ = newxBeeArray.pop();
             xBeeOBJ.ConnStatus = true;
             xBeeArray.push(xBeeOBJ);
@@ -99,7 +98,7 @@ function openNode(id) {
     var text = '<table>';
     var length = xBeeArray.length;
     var xBeeOBJ;
-    var found = false;refresh
+    var found = false;
     for (var i = 0; i < length; i++) {
         xBeeOBJ = xBeeArray[i];
         if (xBeeOBJ.ID == id) {
@@ -147,15 +146,14 @@ function getNodes(refreshtest){
         if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
             jsonobj = JSON.parse(xhttp.responseText);
             if(refreshtest && jsonobj.success){
-                refresh(jsonobj.nodes);
-                console.log(jsonobj);
+                newxBeeArray = jsonobj.nodes;
             }else if(!refreshtest && jsonobj.success){
-                initialize(jsonobj.nodes);
+                xBeeArray = jsonobj.nodes;
             }else{
                 alert('You are not authorized, please sign in.');
             }
         }
-    }
+    };
     xhttp.open('GET', '/api/list', true);
     xhttp.send();
     return jsonobj;
@@ -174,7 +172,7 @@ function login(){
               $( '#errorcon' ).text( 'Error: ' + jsonobj.error );
             }
         }
-    }
+    };
     xhttp.open('POST','/api/login', true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify(loginfo));
@@ -190,7 +188,7 @@ function logout(){
                 window.location = 'login.html';
             }
         }
-    }
+    };
     xhttp.open('GET','/api/logout', true);
     xhttp.send();
 }
@@ -205,10 +203,10 @@ function addXbees(i){
         if(xhttp.readState == XMLHttpRequest.DONE && xhttp.status == 200){
             jsonobj = JSON.parse(xhttp.responseText);
             if(!jsonobj.success){
-                alert('addXbees failed')
+                alert('addXbees failed');
             }
         }
-    }
+    };
     xhttp.open('POST', '/api/add', true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify(xbee));
