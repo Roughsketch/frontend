@@ -32,7 +32,7 @@ function initialize() {
     });
     text = `<table id='nodeTable'>
         <th>ID</th>
-        <th>Readingrefresh</th>
+        <th>Reading</th>
         <th>xBee Name</th>
         <th>Unit</th>`;
     for (var i = 0; i < length; i++) {
@@ -147,10 +147,13 @@ function getNodes(refreshtest){
             jsonobj = JSON.parse(xhttp.responseText);
             if(refreshtest && jsonobj.success){
                 newxBeeArray = jsonobj.nodes;
+                refresh();
             }else if(!refreshtest && jsonobj.success){
                 xBeeArray = jsonobj.nodes;
+                initialize();
             }else{
                 alert('You are not authorized, please sign in.');
+                window.location = 'login.html';
             }
         }
     };
