@@ -6,12 +6,12 @@ function begin() {
     var body = document.getElementById('mainb');
     var text = `<h1 id='tabTitle'>Xbee Nodes</h1>
    <div id='cTable'></div>
-   <p id='refbutton'><button onclick='refresh()'>Refresh</button></p>`;
+   <p id='refbutton'><button onclick='getNodes(true)'>Refresh</button></p>`;
    body.innerHTML = text;
-   initialize();
+   getNodes(false);
 }
 
-function initialize() {
+function initialize(ndoes) {
     /*TODO need a function that will return all connected Xbees with values for columns
     (id, description, value)
     id = Xbee id number
@@ -19,6 +19,7 @@ function initialize() {
     value = The scaled value of the reading
     Then populate a table on the page with all of these values
     JSON*/
+    xBeeArray = nodes;
     var xBeeOBJ;
     var length = xBeeArray.length;
     var table = document.getElementById('cTable');
@@ -45,17 +46,16 @@ function initialize() {
             text += '<td>' + xBeeOBJ.Unit + '</td>';
         }
     }
-    text += '</table>';
+    text += '</table>';refresh
     table.innerHTML = text;
     tabletext = text;
 }
 
-function refresh() {
+function refresh(newxBeeArray) {
     /*TODO need a function that will return all connected Xbees again with values for columns(idnum, data)
     After, a check needs to be done with existing table elements to see if they were all updated.
     If they weren't, gray out the table box.  If they were, update the data, if new nodes exist add them.
     */
-    newxBeeArray = getNodes();
     var alength = newxBeeArray.length;
     var length = xBeeArray.length;
     var found = false;
@@ -67,7 +67,7 @@ function refresh() {
         xBeeOBJ = newxBeeArray.shift();
         for (var j = 0; j < length; j++) {
             if (xBeeOBJ.ID == xBeeArray[j].ID) {
-                found = true;
+                found = true;refresh
                 xBeeOBJ.ConnStatus = true;
                 xBeeArray[j] = xBeeOBJ;
                 break;
@@ -95,7 +95,7 @@ function openNode(id) {
     var text = '<table>';
     var length = xBeeArray.length;
     var xBeeOBJ;
-    var found = false;
+    var found = false;refresh
     for (var i = 0; i < length; i++) {
         xBeeOBJ = xBeeArray[i];
         if (xBeeOBJ.ID == id) {
@@ -133,28 +133,33 @@ function goBack() {
     table.innerHTML = tabletext;
 }
 
-function getNodes(){
+function getNodes(refreshtest){
+    //refreshtest just determines what function to send data to.
+    //true for refresh(), false for initialize().
     var jsonobj = '';
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function(){
         if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
             jsonobj = JSON.parse(xhttp.responseText);
-            console.log(jsonobj);
+            if(refreshtest && jsonobj.success){
+                refresh(jsonobj.nodes);
+                console.log(jsonobj);
+            }else if(!refreshtest && jsonobj.success){
+                initialize(jsonobj.nodes);
+            }else{
+                alert('You are not authorized, please sign in.');
+            }
         }
     }
-    xhttp.open('GET', 'api/list', true);
+    xhttp.open('GET', '/api/list', true);
     xhttp.send();
     return jsonobj;
 }
 
 function login(){
     var jsonobj;
-    var user = $('#user').val();
-    var password = $('#password').val();
-    var loginfo = {"user" : "user", "pass" : "pass"};
-    loginfo.user = user;
-    loginfo.pass = password;
+    var loginfo = {"user" : $('#user').val(), "pass" : $('#password').val()};
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
         if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
@@ -166,7 +171,22 @@ function login(){
             }
         }
     }
-    xhttp.open('POST','api/login', true);
+    xhttp.open('POST','/api/login', true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify(loginfo));
+}
+
+function logout(){
+    var jsonobj = '';
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function(){
+        if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
+            jsonobj = JSON.parse(xhttp.responseText);
+            if(jsonobj.success){
+                window.location = 'login.html';
+            }
+        }
+    }
+    xhttp.open('GET','/api/logout', true);
+    xhttp.send();
 }
