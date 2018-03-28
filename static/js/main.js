@@ -66,7 +66,7 @@ function refresh() {
     for (var i = 0; i < length; i++) {
         xBeeArray[i].ConnStatus = false;
     }
-    for (i = 0; i < alength; i++) {
+    for (var i = 0; i < alength; i++) {
         xBeeOBJ = newxBeeArray.shift();
         for (var j = 0; j < length; j++) {
             if (xBeeOBJ.ID == xBeeArray[j].ID) {
@@ -83,7 +83,7 @@ function refresh() {
     }
     alength = newxBeeArray.length;
     if (alength > 0) {
-        for (i = 0; i < alength; i++) {
+        for (var i = 0; i < alength; i++) {
             xBeeOBJ = newxBeeArray.pop();
             xBeeOBJ.ConnStatus = true;
             xBeeArray.push(xBeeOBJ);
@@ -139,12 +139,11 @@ function goBack() {
 function getNodes(refreshtest){
     //refreshtest just determines what function to send data to.
     //true for refresh(), false for initialize().
-    var jsonobj = '';
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function(){
         if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
-            jsonobj = JSON.parse(xhttp.responseText);
+            var jsonobj = JSON.parse(xhttp.responseText);
             if(refreshtest && jsonobj.success){
                 newxBeeArray = jsonobj.nodes;
                 refresh();
@@ -159,16 +158,14 @@ function getNodes(refreshtest){
     };
     xhttp.open('GET', '/api/list', true);
     xhttp.send();
-    return jsonobj;
 }
 
 function login(){
-    var jsonobj;
     var loginfo = {"user" : $('#user').val(), "pass" : $('#password').val()};
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
         if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
-            jsonobj = JSON.parse(xhttp.responseText);
+            var jsonobj = JSON.parse(xhttp.responseText);
             if(jsonobj.success){
               window.location = 'index.html';
             }else{
@@ -182,11 +179,10 @@ function login(){
 }
 
 function logout(){
-    var jsonobj = '';
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
         if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
-            jsonobj = JSON.parse(xhttp.responseText);
+            var jsonobj = JSON.parse(xhttp.responseText);
             if(jsonobj.success){
                 window.location = 'login.html';
             }
@@ -196,15 +192,15 @@ function logout(){
     xhttp.send();
 }
 
-function addXbees(i){
-    jsonobj = '';
+function addXbees(testdata){
+    //just using the same data so that I can easily verify that I'm getting the right stuff for each row.
     var xhttp = new XMLHttpRequest();
 
-    xbee = {"node_id":i, "name":i.toString(), "units":i.toString()};
+    xbee = {"node_id":testdata, "name":testdata.toString(), "units":testdata.toString()};
 
     xhttp.onreadystatechange = function(){
         if(xhttp.readState == XMLHttpRequest.DONE && xhttp.status == 200){
-            jsonobj = JSON.parse(xhttp.responseText);
+            var jsonobj = JSON.parse(xhttp.responseText);
             if(!jsonobj.success){
                 alert('addXbees failed');
             }
