@@ -8,10 +8,6 @@ function begin() {
    <div id='cTable'></div>
    <p id='refbutton'><button onclick='getNodes(true)'>Refresh</button></p>`;
    body.innerHTML = text;
-
-   for(var i = 0; i < 10; i++){
-       addXbees(i);
-   }
    getNodes(false);
 }
 
@@ -28,7 +24,7 @@ function initialize() {
     var table = document.getElementById('cTable');
     var text = '';
     xBeeArray.sort(function(a, b) {
-        return a.ID - b.ID;
+        return a.node_id - b.node_id;
     });
     text = `<table id='nodeTable'>
         <th>ID</th>
@@ -38,15 +34,15 @@ function initialize() {
     for (var i = 0; i < length; i++) {
         xBeeOBJ = xBeeArray[i];
         if (xBeeOBJ.ConnStatus === true) {
-            text += '<tr id = \'conn\'><td><button onclick=\'openNode(' + xBeeOBJ.ID + ')\'>' + xBeeOBJ.ID + '</button></td>';
+            text += '<tr id = \'conn\'><td><button onclick=\'openNode(' + xBeeOBJ.node_id + ')\'>' + xBeeOBJ.node_id + '</button></td>';
             text += '<td>' + xBeeOBJ.Reading + '</td>';
-            text += '<td>' + xBeeOBJ.Name + '</td>';
-            text += '<td>' + xBeeOBJ.Unit + '</td>';
+            text += '<td>' + xBeeOBJ.name + '</td>';
+            text += '<td>' + xBeeOBJ.units + '</td>';
         } else {
-            text += '<tr id = \'dconn\'><td><button onclick=\'openNode(' + xBeeOBJ.ID + ')\'>' + xBeeOBJ.ID + '</button></td>';
+            text += '<tr id = \'dconn\'><td><button onclick=\'openNode(' + xBeeOBJ.node_id + ')\'>' + xBeeOBJ.node_id + '</button></td>';
             text += '<td>' + xBeeOBJ.Reading + '</td>';
-            text += '<td>' + xBeeOBJ.Name + '</td>';
-            text += '<td>' + xBeeOBJ.Unit + '</td>';
+            text += '<td>' + xBeeOBJ.name + '</td>';
+            text += '<td>' + xBeeOBJ.units + '</td>';
         }
     }
     text += '</table>';
@@ -69,7 +65,7 @@ function refresh() {
     for (var i = 0; i < alength; i++) {
         xBeeOBJ = newxBeeArray.shift();
         for (var j = 0; j < length; j++) {
-            if (xBeeOBJ.ID == xBeeArray[j].ID) {
+            if (xBeeOBJ.node_id == xBeeArray[j].node_id) {
                 found = true;
                 xBeeOBJ.ConnStatus = true;
                 xBeeArray[j] = xBeeOBJ;
@@ -101,20 +97,20 @@ function openNode(id) {
     var found = false;
     for (var i = 0; i < length; i++) {
         xBeeOBJ = xBeeArray[i];
-        if (xBeeOBJ.ID == id) {
+        if (xBeeOBJ.node_id == id) {
             found = true;
             break;
         }
     }
     if (found) {
-        text += '<tr><td>Module ID</td><td>' + xBeeOBJ.ID + '</td>';
+        text += '<tr><td>Module ID</td><td>' + xBeeOBJ.node_id + '</td>';
         text += '<tr><td>Reading</td><td>' + xBeeOBJ.Reading + '</td>';
         text += '<tr><td>Minimum Voltage</td><td>' + xBeeOBJ.MinVol + '</td>';
         text += '<tr><td>Maximum Voltage</td><td>' + xBeeOBJ.MaxVol + '</td>';
         text += '<tr><td>Minimum Value</td><td>' + xBeeOBJ.MinVal + '</td>';
         text += '<tr><td>Maximum Value</td><td>' + xBeeOBJ.MaxVal + '</td>';
-        text += '<tr><td>Description</td><td>' + xBeeOBJ.Name + '</td>';
-        text += '<tr><td>Unit of Measurment</td><td>' + xBeeOBJ.Unit + '</td>';
+        text += '<tr><td>Description</td><td>' + xBeeOBJ.name + '</td>';
+        text += '<tr><td>Unit of Measurment</td><td>' + xBeeOBJ.units + '</td>';
         text += '<tr><td>Connection Status</td><td>';
         if (xBeeOBJ.ConnStatus) {
             text += 'Connected</td>';
@@ -145,10 +141,12 @@ function getNodes(refreshtest){
         if(xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200){
             var jsonobj = JSON.parse(xhttp.responseText);
             if(refreshtest && jsonobj.success){
+                console.log(jsonobj.nodes);
                 newxBeeArray = jsonobj.nodes;
                 refresh();
             }else if(!refreshtest && jsonobj.success){
                 xBeeArray = jsonobj.nodes;
+                console.log(xBeeArray)
                 initialize();
             }else{
                 alert('You are not authorized, please sign in.');
@@ -206,7 +204,7 @@ function addXbees(testdata){
             }
         }
     };
-    xhttp.open('POST', '/api/add', true);
+    xhttp.open('POST', '/api/add', false);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify(xbee));
 }
