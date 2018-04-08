@@ -34,12 +34,12 @@ function initialize() {
     for (var i = 0; i < length; i++) {
         xBeeOBJ = xBeeArray[i];
         if (xBeeOBJ.ConnStatus === true) {
-            text += '<tr id = \'conn\'><td><button onclick=\'openNode(' + xBeeOBJ.node_id + ')\'>' + xBeeOBJ.node_id + '</button></td>';
+            text += '<tr id = \'conn\'><td><button onclick=\'openNode(' + xBeeOBJ.id + ')\'>' + xBeeOBJ.node_id + '</button></td>';
             text += '<td>' + xBeeOBJ.Reading + '</td>';
             text += '<td>' + xBeeOBJ.name + '</td>';
             text += '<td>' + xBeeOBJ.units + '</td>';
         } else {
-            text += '<tr id = \'dconn\'><td><button onclick=\'openNode(' + xBeeOBJ.node_id + ')\'>' + xBeeOBJ.node_id + '</button></td>';
+            text += '<tr id = \'dconn\'><td><button onclick=\'openNode(' + xBeeOBJ.id + ')\'>' + xBeeOBJ.node_id + '</button></td>';
             text += '<td>' + xBeeOBJ.Reading + '</td>';
             text += '<td>' + xBeeOBJ.name + '</td>';
             text += '<td>' + xBeeOBJ.units + '</td>';
@@ -97,7 +97,7 @@ function openNode(id) {
     var found = false;
     for (var i = 0; i < length; i++) {
         xBeeOBJ = xBeeArray[i];
-        if (xBeeOBJ.node_id == id) {
+        if (xBeeOBJ.id == id) {
             found = true;
             break;
         }
