@@ -146,7 +146,9 @@ function getNodes(refreshtest){
                 refresh();
             }else if(!refreshtest && jsonobj.success){
                 xBeeArray = jsonobj.nodes;
-                console.log(xBeeArray)
+                for(var i = 0; i < xBeeArray.length; i++){
+                    xBeeArray[i].ConnStatus = true;
+                }
                 initialize();
             }else{
                 alert('You are not authorized, please sign in.');
