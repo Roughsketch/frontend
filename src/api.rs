@@ -100,15 +100,17 @@ fn add(xbee: Json<NewXbee>, conn: DbConn, _user: AuthedUser) -> JsonValue {
 /// ```json
 /// {
 ///     "nodes": [{
-///         "id": 1,
-///         "name": "Temperature Sensor",
-///         "node_id": 1234,
-///         "units": "C"
+///         "last_update": 1523568385,
+///         "max_value": 150.0,
+///         "max_voltage": 5.0,
+///         "min_value": 0.0,
+///         "min_voltage": 0.0,
+///         "name": "Test",
+///         "reading": 413,
+///         "units": "C",
+///         "uuid": 2
 ///     }, {
-///         "id": 2,
-///         "name": "Weight Sensor",
-///         "node_id": 4321,
-///         "units": "kg"
+///         ...
 ///     }],
 ///     "success": true
 /// }
