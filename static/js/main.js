@@ -24,7 +24,7 @@ function initialize() {
     var table = document.getElementById('cTable');
     var text = '';
     xBeeArray.sort(function(a, b) {
-        return a.node_id - b.node_id;
+        return a.uuid - b.uuid;
     });
     text = `<table id='nodeTable'>
         <th>ID</th>
@@ -34,12 +34,12 @@ function initialize() {
     for (var i = 0; i < length; i++) {
         xBeeOBJ = xBeeArray[i];
         if (xBeeOBJ.ConnStatus === true) {
-            text += '<tr id = \'conn\'><td><button onclick=\'openNode(' + xBeeOBJ.id + ')\'>' + xBeeOBJ.node_id + '</button></td>';
+            text += '<tr id = \'conn\'><td><button onclick=\'openNode(' + xBeeOBJ.id + ')\'>' + xBeeOBJ.uuid + '</button></td>';
             text += '<td>' + xBeeOBJ.reading + '</td>';
             text += '<td>' + xBeeOBJ.name + '</td>';
             text += '<td>' + xBeeOBJ.units + '</td>';
         } else {
-            text += '<tr id = \'dconn\'><td><button onclick=\'openNode(' + xBeeOBJ.id + ')\'>' + xBeeOBJ.node_id + '</button></td>';
+            text += '<tr id = \'dconn\'><td><button onclick=\'openNode(' + xBeeOBJ.id + ')\'>' + xBeeOBJ.uuid + '</button></td>';
             text += '<td>' + xBeeOBJ.reading + '</td>';
             text += '<td>' + xBeeOBJ.name + '</td>';
             text += '<td>' + xBeeOBJ.units + '</td>';
@@ -65,7 +65,7 @@ function refresh() {
     for (var i = 0; i < alength; i++) {
         xBeeOBJ = newxBeeArray.shift();
         for (var j = 0; j < length; j++) {
-            if (xBeeOBJ.node_id == xBeeArray[j].node_id) {
+            if (xBeeOBJ.uuid == xBeeArray[j].uuid) {
                 found = true;
                 xBeeOBJ.ConnStatus = true;
                 xBeeArray[j] = xBeeOBJ;
@@ -103,12 +103,12 @@ function openNode(id) {
         }
     }
     if (found) {
-        text += '<tr><td>Module ID</td><td>' + xBeeOBJ.node_id + '</td>';
+        text += '<tr><td>Module ID</td><td>' + xBeeOBJ.uuid + '</td>';
         text += '<tr><td>Reading</td><td>' + xBeeOBJ.reading + '</td>';
-        text += '<tr><td>Minimum Voltage</td><td>' + xBeeOBJ.min_vol + '</td>';
-        text += '<tr><td>Maximum Voltage</td><td>' + xBeeOBJ.max_vol + '</td>';
-        text += '<tr><td>Minimum Value</td><td>' + xBeeOBJ.min_val + '</td>';
-        text += '<tr><td>Maximum Value</td><td>' + xBeeOBJ.max_val + '</td>';
+        text += '<tr><td>Minimum Voltage</td><td>' + xBeeOBJ.min_voltage + '</td>';
+        text += '<tr><td>Maximum Voltage</td><td>' + xBeeOBJ.max_voltage + '</td>';
+        text += '<tr><td>Minimum Value</td><td>' + xBeeOBJ.min_value + '</td>';
+        text += '<tr><td>Maximum Value</td><td>' + xBeeOBJ.max_value + '</td>';
         text += '<tr><td>Description</td><td>' + xBeeOBJ.name + '</td>';
         text += '<tr><td>Unit of Measurment</td><td>' + xBeeOBJ.units + '</td>';
         text += '<tr><td>Connection Status</td><td>';
@@ -196,7 +196,7 @@ function addXbees(testdata){
     //just using the same data so that I can easily verify that I'm getting the right stuff for each row.
     var xhttp = new XMLHttpRequest();
 
-    xbee = {"node_id":testdata, "name":testdata.toString(), "units":testdata.toString()};
+    xbee = {"uuid":testdata, "name":testdata.toString(), "units":testdata.toString()};
 
     xhttp.onreadystatechange = function(){
         if(xhttp.readState == XMLHttpRequest.DONE && xhttp.status == 200){
