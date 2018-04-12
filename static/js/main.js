@@ -104,11 +104,11 @@ function openNode(id) {
     }
     if (found) {
         text += '<tr><td>Module ID</td><td>' + xBeeOBJ.node_id + '</td>';
-        text += '<tr><td>Reading</td><td>' + xBeeOBJ.Reading + '</td>';
-        text += '<tr><td>Minimum Voltage</td><td>' + xBeeOBJ.MinVol + '</td>';
-        text += '<tr><td>Maximum Voltage</td><td>' + xBeeOBJ.MaxVol + '</td>';
-        text += '<tr><td>Minimum Value</td><td>' + xBeeOBJ.MinVal + '</td>';
-        text += '<tr><td>Maximum Value</td><td>' + xBeeOBJ.MaxVal + '</td>';
+        text += '<tr><td>Reading</td><td>' + xBeeOBJ.reading + '</td>';
+        text += '<tr><td>Minimum Voltage</td><td>' + xBeeOBJ.min_vol + '</td>';
+        text += '<tr><td>Maximum Voltage</td><td>' + xBeeOBJ.max_vol + '</td>';
+        text += '<tr><td>Minimum Value</td><td>' + xBeeOBJ.min_val + '</td>';
+        text += '<tr><td>Maximum Value</td><td>' + xBeeOBJ.max_val + '</td>';
         text += '<tr><td>Description</td><td>' + xBeeOBJ.name + '</td>';
         text += '<tr><td>Unit of Measurment</td><td>' + xBeeOBJ.units + '</td>';
         text += '<tr><td>Connection Status</td><td>';
@@ -169,7 +169,7 @@ function login(){
             if(jsonobj.success){
               window.location = 'index.html';
             }else{
-              $( '#errorcon' ).text( 'Error: ' + jsonobj.error );
+              $( '#errorcon' ).text( 'Error: max' + jsonobj.error );
             }
         }
     };
