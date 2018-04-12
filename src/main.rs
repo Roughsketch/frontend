@@ -2,21 +2,22 @@
 #![plugin(rocket_codegen)]
 
 extern crate bcrypt;
-#[macro_use] 
-extern crate diesel;
+#[macro_use] extern crate diesel;
 extern crate dotenv;
-#[macro_use] 
-extern crate log;
+#[macro_use] extern crate dotenv_codegen;
+#[macro_use] extern crate log;
 extern crate r2d2;
 extern crate r2d2_diesel;
 extern crate rocket;
-#[macro_use] 
-extern crate rocket_contrib;
-#[macro_use] 
-extern crate serde_derive;
+#[macro_use] extern crate rocket_contrib;
+#[macro_use] extern crate serde_derive;
+extern crate xbee;
 
+use std::collections::VecDeque;
 use std::io;
 use std::path::{Path, PathBuf};
+use std::sync::mpsc;
+use std::thread;
 
 use rocket::response::NamedFile;
 
@@ -55,6 +56,25 @@ fn files(file: PathBuf) -> Option<NamedFile> {
 fn main() {
     //  Establish a connection with the local database
     let conn = db::establish_connection();
+
+    //let (tx, rx) = mpsc::channel();
+
+    thread::spawn(move|| {
+        let mut xbee = xbee::Xbee::new(dotenv!("XBEE_PORT"))
+            .expect("No Xbee found.");
+        let mut packets = VecDeque::new();
+
+        if let Err(why) = xbee.send_packet(0xFFFFFFFF, b"I") {
+            error!("Could not send broadcast packet: {}", why);
+        }
+
+        loop {
+            if let Ok(packet) = xbee.read_packet() {
+                println!("{:?}", packet);
+                packets.push_back(packet);
+            }
+        }
+    });
 
     //  Mount all the routes for the webserver
     rocket::ignite()

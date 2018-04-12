@@ -67,7 +67,7 @@ pub fn create_xbee(conn: &SqliteConnection, node_id: i32, name: &String, units: 
         units: units.clone(),
     };
 
-    diesel::insert_into(xbees::table)
+    diesel::replace_into(xbees::table)
         .values(&new)
         .execute(conn)
         .expect("Error saving new xbee")

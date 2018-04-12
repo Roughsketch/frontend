@@ -6,6 +6,7 @@ authors = ["Maid Dog <maiddogsrl@gmail.com>"]
 [dependencies]
 bcrypt = "0.1"
 dotenv = "0.11"
+dotenv_codegen = "0.11"
 log = "0.4"
 r2d2 = "0.8"
 r2d2-diesel = "1.0"
@@ -30,3 +31,6 @@ git = "https://github.com/SergioBenitez/Rocket"
 rev = "ae8e9025d21c8ff512d8a0917494e21b9eaafc2e"
 default-features = false
 features = ["json"]
+
+[dependencies.xbee]
+path = "../xbee"
