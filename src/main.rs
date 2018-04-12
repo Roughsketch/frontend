@@ -2,10 +2,14 @@
 #![plugin(rocket_codegen)]
 
 extern crate bcrypt;
+extern crate byteorder;
+extern crate chrono;
 #[macro_use] extern crate diesel;
 extern crate dotenv;
 #[macro_use] extern crate dotenv_codegen;
+#[macro_use] extern crate failure;
 #[macro_use] extern crate log;
+extern crate parking_lot;
 extern crate r2d2;
 extern crate r2d2_diesel;
 extern crate rocket;
@@ -14,32 +18,34 @@ extern crate rocket;
 extern crate xbee;
 
 use std::collections::VecDeque;
-use std::io;
 use std::path::{Path, PathBuf};
-use std::sync::mpsc;
+use std::sync::{Arc, mpsc};
 use std::thread;
 
+use failure::Error;
+use parking_lot::RwLock;
 use rocket::response::NamedFile;
 
 mod api;
 mod db;
 mod errors;
+mod info;
 
 /// This will return the homepage for an authorized user.
 /// It is the base for the frontend and is where the user 
 /// will be able to interact with and view data from the 
 /// backend.
 #[get("/")]
-fn index_authed(_user: api::AuthedUser) -> io::Result<NamedFile> {
-    NamedFile::open("static/index.html")
+fn index_authed(_user: api::AuthedUser) -> Result<NamedFile, Error> {
+    Ok(NamedFile::open("static/index.html")?)
 }
 
 /// This will return the homepage for an unauthorized user.
 /// Since the data being shown and modified is private,
 /// this will instead redirect to a login page.
 #[get("/", rank = 2)]
-fn index_login() -> io::Result<NamedFile> {
-    NamedFile::open("static/login.html")
+fn index_login() -> Result<NamedFile, Error> {
+    Ok(NamedFile::open("static/login.html")?)
 }
 
 /// This is a wildcard route. It will attempt to send a file
@@ -57,12 +63,14 @@ fn main() {
     //  Establish a connection with the local database
     let conn = db::establish_connection();
 
+    let xbees = info::InfoSet(Arc::new(RwLock::new(Vec::new())));
+    let rocket_xbees = info::InfoSet(xbees.0.clone());
+
     //let (tx, rx) = mpsc::channel();
 
     thread::spawn(move|| {
         let mut xbee = xbee::Xbee::new(dotenv!("XBEE_PORT"))
             .expect("No Xbee found.");
-        let mut packets = VecDeque::new();
 
         if let Err(why) = xbee.send_packet(0xFFFFFFFF, b"I") {
             error!("Could not send broadcast packet: {}", why);
@@ -70,8 +78,15 @@ fn main() {
 
         loop {
             if let Ok(packet) = xbee.read_packet() {
-                println!("{:?}", packet);
-                packets.push_back(packet);
+                if packet.length == 50 {
+                    if let Ok(info) =  info::XbeeInfo::new(packet) {
+                        println!("New Xbee: {:?}", info);
+                        let mut handle = xbees.0.write();
+                        (*handle).push(info);
+                    }
+                } else if packet.length == 2 {
+                    xbees.set_reading(packet);
+                }
             }
         }
     });
@@ -93,5 +108,6 @@ fn main() {
         .catch(catchers![errors::not_found])
         //  Manage the database connection
         .manage(conn)
+        .manage(rocket_xbees)
         .launch();
 }
