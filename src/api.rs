@@ -7,13 +7,9 @@ use bcrypt;
 
 use db::{self, DbConn};
 use db::models::*;
-use db::schema::xbees::dsl::*;
 use db::schema::users::dsl::*;
 use diesel;
 use diesel::prelude::*;
-use parking_lot::RwLock;
-
-use std::sync::Arc;
 
 use super::info::InfoSet;
 
@@ -119,12 +115,8 @@ fn add(xbee: Json<NewXbee>, conn: DbConn, _user: AuthedUser) -> JsonValue {
 /// ```
 #[get("/api/list")]
 fn list_authed(info: InfoSet, _user: AuthedUser) -> JsonValue {
-    //let res = xbees.load::<Xbees>(&*conn).expect("Error loading Xbees.");
-
-    let values = info.0.read();
-
     json!({
-        "nodes": *values,
+        "nodes": info.nodes(),
         "success": true,
     })
 }

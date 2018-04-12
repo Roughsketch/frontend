@@ -17,9 +17,8 @@ extern crate rocket;
 #[macro_use] extern crate serde_derive;
 extern crate xbee;
 
-use std::collections::VecDeque;
 use std::path::{Path, PathBuf};
-use std::sync::{Arc, mpsc};
+use std::sync::Arc;
 use std::thread;
 
 use failure::Error;
@@ -79,13 +78,27 @@ fn main() {
         loop {
             if let Ok(packet) = xbee.read_packet() {
                 if packet.length == 50 {
-                    if let Ok(info) =  info::XbeeInfo::new(packet) {
-                        println!("New Xbee: {:?}", info);
+                    if let Ok(info) =  info::XbeeInfo::new(&packet) {
+                        debug!("New Xbee: {:?}", info);
                         let mut handle = xbees.0.write();
                         (*handle).push(info);
+                        
+                        continue;
                     }
-                } else if packet.length == 2 {
-                    xbees.set_reading(packet);
+                } 
+
+                if xbees.contains(packet.origin) {
+                    if packet.length == 2 {
+                        if let Err(why) = xbees.set_reading(packet) {
+                            warn!("Could not set reading: {:?}", why);
+                        }
+                    }
+                } else {
+                    warn!("Received packet before info was retrieved: {}", packet.origin);
+
+                    if let Err(why) = xbee.send_packet(packet.origin, b"I") {
+                        error!("Could not send info packet: {}", why);
+                    }
                 }
             }
         }

@@ -9,7 +9,7 @@ use rocket::{Outcome, Request, State};
 
 use std::sync::Arc;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct XbeeInfo {
     pub uuid: u32,
     pub name: String,
@@ -33,7 +33,7 @@ enum InfoError {
 }
 
 impl XbeeInfo {
-    pub fn new(packet: Packet) -> Result<Self, Error> {
+    pub fn new(packet: &Packet) -> Result<Self, Error> {
         ensure!(packet.length == 50, InfoError::NoInfo);
         let bytes = packet.data();
 
@@ -60,9 +60,19 @@ impl XbeeInfo {
 pub struct InfoSet(pub Arc<RwLock<Vec<XbeeInfo>>>);
 
 impl InfoSet {
+    pub fn contains(&self, uuid: u32) -> bool {
+        if uuid == 0xFFFFFFFF {
+            return true
+        }
+
+        let values = self.0.read();
+
+        values.iter().any(|x| x.uuid == uuid)
+    }
+
     pub fn set_reading(&self, packet: Packet) -> Result<u16, Error> {
         let mut values = self.0.write();
-        let mut entry = values.iter_mut()
+        let entry = values.iter_mut()
             .find(|x| x.uuid == packet.origin)
             .ok_or(InfoError::NoNode)?;
 
@@ -73,6 +83,10 @@ impl InfoSet {
         entry.set_reading(value);
 
         Ok(value)
+    }
+
+    pub fn nodes(&self) -> Vec<XbeeInfo> {
+        (*self.0.read()).clone()
     }
 }
 
