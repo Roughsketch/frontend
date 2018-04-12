@@ -35,12 +35,12 @@ function initialize() {
         xBeeOBJ = xBeeArray[i];
         if (xBeeOBJ.ConnStatus === true) {
             text += '<tr id = \'conn\'><td><button onclick=\'openNode(' + xBeeOBJ.id + ')\'>' + xBeeOBJ.node_id + '</button></td>';
-            text += '<td>' + xBeeOBJ.Reading + '</td>';
+            text += '<td>' + xBeeOBJ.reading + '</td>';
             text += '<td>' + xBeeOBJ.name + '</td>';
             text += '<td>' + xBeeOBJ.units + '</td>';
         } else {
             text += '<tr id = \'dconn\'><td><button onclick=\'openNode(' + xBeeOBJ.id + ')\'>' + xBeeOBJ.node_id + '</button></td>';
-            text += '<td>' + xBeeOBJ.Reading + '</td>';
+            text += '<td>' + xBeeOBJ.reading + '</td>';
             text += '<td>' + xBeeOBJ.name + '</td>';
             text += '<td>' + xBeeOBJ.units + '</td>';
         }
