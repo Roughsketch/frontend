@@ -35,12 +35,12 @@ function initialize() {
         xBeeOBJ = xBeeArray[i];
         if (xBeeOBJ.ConnStatus === true) {
             text += '<tr id = \'conn\'><td><button onclick=\'openNode(' + xBeeOBJ.id + ')\'>' + xBeeOBJ.uuid + '</button></td>';
-            text += '<td>' + xBeeOBJ.reading + '</td>';
+            text += '<td>' + convertReading(xBeeOBJ.min_voltage, xBeeOBJ.max_voltage, xBeeOBJ.min_value, xBeeOBJ.max_value, xbee_obj.reading) + '</td>';
             text += '<td>' + xBeeOBJ.name + '</td>';
             text += '<td>' + xBeeOBJ.units + '</td>';
         } else {
             text += '<tr id = \'dconn\'><td><button onclick=\'openNode(' + xBeeOBJ.id + ')\'>' + xBeeOBJ.uuid + '</button></td>';
-            text += '<td>' + xBeeOBJ.reading + '</td>';
+            text += '<td>' + convertReading(xBeeOBJ.min_voltage, xBeeOBJ.max_voltage, xBeeOBJ.min_value, xBeeOBJ.max_value, xbee_obj.reading) + '</td>';
             text += '<td>' + xBeeOBJ.name + '</td>';
             text += '<td>' + xBeeOBJ.units + '</td>';
         }
@@ -104,7 +104,7 @@ function openNode(id) {
     }
     if (found) {
         text += '<tr><td>Module ID</td><td>' + xBeeOBJ.uuid + '</td>';
-        text += '<tr><td>Reading</td><td>' + xBeeOBJ.reading + '</td>';
+        text += '<tr><td>Reading</td><td>' + convertReading(xBeeOBJ.min_voltage, xBeeOBJ.max_voltage, xBeeOBJ.min_value, xBeeOBJ.max_value, xbee_obj.reading) + '</td>';
         text += '<tr><td>Minimum Voltage</td><td>' + xBeeOBJ.min_voltage + '</td>';
         text += '<tr><td>Maximum Voltage</td><td>' + xBeeOBJ.max_voltage + '</td>';
         text += '<tr><td>Minimum Value</td><td>' + xBeeOBJ.min_value + '</td>';
@@ -130,6 +130,17 @@ function goBack() {
     <p id='refbutton'><button onclick='refresh()'>Refresh</button></p>`;
     var table = document.getElementById('cTable');
     table.innerHTML = tabletext;
+}
+
+//This function will take the reading from one linear scale to another
+//Specifically from the specified voltage range to the specified value range.
+function convertReading(min_voltage, max_voltage, min_value, max_value, reading){
+    var voltage_range = max_voltage - min_voltage;
+    var value_range = max_value - min_value;
+    var value_per_volt = value_range / voltage_range;
+    var offset_value = min_value - (min_voltage * value_per_volt);
+    var converted = (reading * value_per_volt) + offset_value;
+    return converted;
 }
 
 function getNodes(refreshtest){
