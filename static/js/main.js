@@ -5,8 +5,8 @@ var tabletext = '';
 function begin() {
     var body = document.getElementById('mainb');
     var text = `<h1 id='tabTitle'>Xbee Nodes</h1>
-   <div id='cTable'></div>
-   <p id='refbutton'><button onclick='getNodes(true)'>Refresh</button></p>`;
+   <div id='cTable'></div>`;
+   setInterval(refresh, 1000);
    body.innerHTML = text;
    getNodes(false);
 }
@@ -55,36 +55,35 @@ function refresh() {
     After, a check needs to be done with existing table elements to see if they were all updated.
     If they weren't, gray out the table box.  If they were, update the data, if new nodes exist add them.
     */
-    var alength = newxBeeArray.length;
-    var length = xBeeArray.length;
-    var found = false;
-    var xBeeOBJ = '';
-    for (var i = 0; i < length; i++) {
-        xBeeArray[i].ConnStatus = false;
-    }
-    for (var i = 0; i < alength; i++) {
-        xBeeOBJ = newxBeeArray.shift();
-        for (var j = 0; j < length; j++) {
-            if (xBeeOBJ.uuid == xBeeArray[j].uuid) {
+    var old = xBeeArray;
+    getNodes(false);
+    var updated = xBeeArray;
+
+    for (var i = 0; i < old.length; i++) {
+        var found = false;
+        for (var j = 0; j < updated.length; ++j) {
+            if (updated[j].uuid == old[i].uuid) {
                 found = true;
-                xBeeOBJ.ConnStatus = true;
-                xBeeArray[j] = xBeeOBJ;
-                break;
             }
         }
+
         if (!found) {
-            newxBeeArray.push(xBeeOBJ);
-        }
-        found = false;
-    }
-    alength = newxBeeArray.length;
-    if (alength > 0) {
-        for (var i = 0; i < alength; i++) {
-            xBeeOBJ = newxBeeArray.pop();
-            xBeeOBJ.ConnStatus = true;
-            xBeeArray.push(xBeeOBJ);
+            old[i].ConnStatus = false;
+            updated.push(old[i]);
         }
     }
+
+    xBeeArray = updated;
+
+    var now = Date.now() / 1000;
+    for (var i = 0; i < xBeeArray.length; i++) {
+        if (xBeeArray[i].last_update + 5 < now) {
+            xBeeArray[i].ConnStatus = false;
+        } else {
+            xBeeArray[i].ConnStatus = true;
+        }
+    }
+
     initialize();
 }
 
@@ -160,7 +159,7 @@ function getNodes(refreshtest){
                 for(var i = 0; i < xBeeArray.length; i++){
                     xBeeArray[i].ConnStatus = true;
                 }
-                initialize();
+                //initialize();
             }else{
                 alert('You are not authorized, please sign in.');
                 window.location = 'login.html';
