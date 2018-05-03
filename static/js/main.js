@@ -22,32 +22,35 @@ function initialize() {
     var xBeeOBJ;
     var length = xBeeArray.length;
     var table = document.getElementById('cTable');
-    var text = '';
-    xBeeArray.sort(function(a, b) {
-        return a.uuid - b.uuid;
-    });
-    text = `<table id='nodeTable'>
-        <th>ID</th>
-        <th>Reading</th>
-        <th>xBee Name</th>
-        <th>Unit</th>`;
-    for (var i = 0; i < length; i++) {
-        xBeeOBJ = xBeeArray[i];
-        if (xBeeOBJ.ConnStatus === true) {
-            text += '<tr id = \'conn\'><td><button onclick=\'openNode(' + xBeeOBJ.id + ')\'>' + xBeeOBJ.uuid + '</button></td>';
-            text += '<td>' + convertReading(xBeeOBJ.min_voltage, xBeeOBJ.max_voltage, xBeeOBJ.min_value, xBeeOBJ.max_value, xbee_obj.reading) + '</td>';
-            text += '<td>' + xBeeOBJ.name + '</td>';
-            text += '<td>' + xBeeOBJ.units + '</td>';
-        } else {
-            text += '<tr id = \'dconn\'><td><button onclick=\'openNode(' + xBeeOBJ.id + ')\'>' + xBeeOBJ.uuid + '</button></td>';
-            text += '<td>' + convertReading(xBeeOBJ.min_voltage, xBeeOBJ.max_voltage, xBeeOBJ.min_value, xBeeOBJ.max_value, xbee_obj.reading) + '</td>';
-            text += '<td>' + xBeeOBJ.name + '</td>';
-            text += '<td>' + xBeeOBJ.units + '</td>';
+
+    if (table !== null) {
+        var text = '';
+        xBeeArray.sort(function(a, b) {
+            return a.uuid - b.uuid;
+        });
+        text = `<table id='nodeTable'>
+            <th>ID</th>
+            <th>Reading</th>
+            <th>xBee Name</th>
+            <th>Unit</th>`;
+        for (var i = 0; i < length; i++) {
+            xBeeOBJ = xBeeArray[i];
+            if (xBeeOBJ.ConnStatus === true) {
+                text += '<tr id = \'conn\'><td><button onclick=\'openNode(' + xBeeOBJ.uuid + ')\'>' + xBeeOBJ.uuid + '</button></td>';
+                text += '<td>' + convertReading(xBeeOBJ.min_voltage, xBeeOBJ.max_voltage, xBeeOBJ.min_value, xBeeOBJ.max_value, xBeeOBJ.reading).toFixed(2) + '</td>';
+                text += '<td>' + xBeeOBJ.name + '</td>';
+                text += '<td>' + xBeeOBJ.units + '</td>';
+            } else {
+                text += '<tr id = \'dconn\'><td><button onclick=\'openNode(' + xBeeOBJ.uuid + ')\'>' + xBeeOBJ.uuid + '</button></td>';
+                text += '<td>' + convertReading(xBeeOBJ.min_voltage, xBeeOBJ.max_voltage, xBeeOBJ.min_value, xBeeOBJ.max_value, xBeeOBJ.reading).toFixed(2) + '</td>';
+                text += '<td>' + xBeeOBJ.name + '</td>';
+                text += '<td>' + xBeeOBJ.units + '</td>';
+            }
         }
+        text += '</table>';
+        table.innerHTML = text;
+        tabletext = text;
     }
-    text += '</table>';
-    table.innerHTML = text;
-    tabletext = text;
 }
 
 function refresh() {
@@ -96,14 +99,14 @@ function openNode(id) {
     var found = false;
     for (var i = 0; i < length; i++) {
         xBeeOBJ = xBeeArray[i];
-        if (xBeeOBJ.id == id) {
+        if (xBeeOBJ.uuid == id) {
             found = true;
             break;
         }
     }
     if (found) {
         text += '<tr><td>Module ID</td><td>' + xBeeOBJ.uuid + '</td>';
-        text += '<tr><td>Reading</td><td>' + convertReading(xBeeOBJ.min_voltage, xBeeOBJ.max_voltage, xBeeOBJ.min_value, xBeeOBJ.max_value, xbee_obj.reading) + '</td>';
+        text += '<tr><td>Reading</td><td>' + convertReading(xBeeOBJ.min_voltage, xBeeOBJ.max_voltage, xBeeOBJ.min_value, xBeeOBJ.max_value, xBeeOBJ.reading) + '</td>';
         text += '<tr><td>Minimum Voltage</td><td>' + xBeeOBJ.min_voltage + '</td>';
         text += '<tr><td>Maximum Voltage</td><td>' + xBeeOBJ.max_voltage + '</td>';
         text += '<tr><td>Minimum Value</td><td>' + xBeeOBJ.min_value + '</td>';
@@ -111,7 +114,15 @@ function openNode(id) {
         text += '<tr><td>Description</td><td>' + xBeeOBJ.name + '</td>';
         text += '<tr><td>Unit of Measurment</td><td>' + xBeeOBJ.units + '</td>';
         text += '<tr><td>Connection Status</td><td>';
-        if (xBeeOBJ.ConnStatus) {
+
+        var now = Date.now() / 1000;
+        if (xBeeOBJ.last_update + 5 < now) {
+            xBeeOBJ.ConnStatus = false;
+        } else {
+            xBeeOBJ.ConnStatus = true;
+        }
+
+        if (xBeeOBJ.ConnStatus === true) {
             text += 'Connected</td>';
         } else {
             text += 'Disconnected</td>';
@@ -139,7 +150,7 @@ function convertReading(min_voltage, max_voltage, min_value, max_value, reading)
     var value_per_volt = value_range / voltage_range;
     var offset_value = min_value - (min_voltage * value_per_volt);
     var converted = (reading * value_per_volt) + offset_value;
-    return converted;
+    return converted / 100;
 }
 
 function getNodes(refreshtest){

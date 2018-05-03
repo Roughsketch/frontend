@@ -17,6 +17,7 @@ extern crate rocket;
 #[macro_use] extern crate serde_derive;
 extern crate xbee;
 
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::thread;
@@ -62,7 +63,7 @@ fn main() {
     //  Establish a connection with the local database
     let conn = db::establish_connection();
 
-    let xbees = info::InfoSet(Arc::new(RwLock::new(Vec::new())));
+    let xbees = info::InfoSet(Arc::new(RwLock::new(HashMap::new())));
     let rocket_xbees = info::InfoSet(xbees.0.clone());
 
     //let (tx, rx) = mpsc::channel();
@@ -76,30 +77,34 @@ fn main() {
         }
 
         loop {
-            if let Ok(packet) = xbee.read_packet() {
-                if packet.length == 50 {
-                    if let Ok(info) =  info::XbeeInfo::new(&packet) {
-                        debug!("New Xbee: {:?}", info);
-                        let mut handle = xbees.0.write();
-                        (*handle).push(info);
-                        
-                        continue;
-                    }
-                } 
+            match xbee.read_packet() {
+                Ok(packet) => {
+                    trace!("Got packet: {:#?}", packet);
+                    if packet.length == 50 {
+                        if let Ok(info) =  info::XbeeInfo::new(&packet) {
+                            debug!("New Xbee: {:?}", info);
+                            let mut handle = xbees.0.write();
+                            (*handle).insert(packet.origin, info);
+                            
+                            continue;
+                        }
+                    } 
 
-                if xbees.contains(packet.origin) {
-                    if packet.length == 2 {
-                        if let Err(why) = xbees.set_reading(packet) {
-                            warn!("Could not set reading: {:?}", why);
+                    if xbees.contains(packet.origin) {
+                        if packet.length == 2 {
+                            if let Err(why) = xbees.set_reading(packet) {
+                                warn!("Could not set reading: {:?}", why);
+                            }
+                        }
+                    } else {
+                        debug!("Received packet before info was retrieved: {}", packet.origin);
+
+                        if let Err(why) = xbee.send_packet(packet.origin, b"C") {
+                            error!("Could not send info packet: {}", why);
                         }
                     }
-                } else {
-                    warn!("Received packet before info was retrieved: {}", packet.origin);
-
-                    if let Err(why) = xbee.send_packet(packet.origin, b"I") {
-                        error!("Could not send info packet: {}", why);
-                    }
                 }
+                Err(why) => debug!("Read error: {}", why),
             }
         }
     });

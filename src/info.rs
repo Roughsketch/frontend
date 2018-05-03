@@ -7,6 +7,7 @@ use rocket::http::Status;
 use rocket::request::{self, FromRequest};
 use rocket::{Outcome, Request, State};
 
+use std::collections::HashMap;
 use std::sync::Arc;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -57,7 +58,7 @@ impl XbeeInfo {
 }
 
 #[derive(Clone)]
-pub struct InfoSet(pub Arc<RwLock<Vec<XbeeInfo>>>);
+pub struct InfoSet(pub Arc<RwLock<HashMap<u32, XbeeInfo>>>);
 
 impl InfoSet {
     pub fn contains(&self, uuid: u32) -> bool {
@@ -67,13 +68,12 @@ impl InfoSet {
 
         let values = self.0.read();
 
-        values.iter().any(|x| x.uuid == uuid)
+        values.contains_key(&uuid)
     }
 
     pub fn set_reading(&self, packet: Packet) -> Result<u16, Error> {
         let mut values = self.0.write();
-        let entry = values.iter_mut()
-            .find(|x| x.uuid == packet.origin)
+        let entry = values.get_mut(&packet.origin)
             .ok_or(InfoError::NoNode)?;
 
         let data = packet.data();
@@ -86,7 +86,12 @@ impl InfoSet {
     }
 
     pub fn nodes(&self) -> Vec<XbeeInfo> {
-        (*self.0.read()).clone()
+        (*self.0.read())
+            .values()
+            .by_ref()
+            .map(|v| v.clone())
+            .collect::<Vec<XbeeInfo>>()
+            .clone()
     }
 }
 
